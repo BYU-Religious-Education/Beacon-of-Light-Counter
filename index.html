@@ -22,7 +22,7 @@
 
         .counter {
             display: flex;
-            gap: 0.2em; /* Space between digits */
+            gap: 0.2em;
         }
 
         .digit {
@@ -36,7 +36,6 @@
         }
 
         .digit span {
-            display: block;
             position: absolute;
             width: 100%;
             text-align: center;
@@ -50,7 +49,10 @@
             try {
                 let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cache=" + new Date().getTime());
                 if (!response.ok) throw new Error("Network response was not ok");
-                let newCounter = (await response.text()).trim().padStart(3, "0");
+                let newCounter = (await response.text()).trim();
+
+                // Ensure the counter is exactly 3 digits
+                newCounter = newCounter.padStart(3, "0");
 
                 if (newCounter !== currentCounter) {
                     updateCounter(newCounter);
@@ -66,7 +68,9 @@
             let counterDiv = document.getElementById("counter");
             counterDiv.innerHTML = ""; 
 
-            newCounter.split("").forEach((num, index) => {
+            for (let i = 0; i < 3; i++) {
+                let num = newCounter[i] || "0"; // Ensure we always have 3 digits
+
                 let digitDiv = document.createElement("div");
                 digitDiv.className = "digit";
 
@@ -77,8 +81,8 @@
                 digitDiv.appendChild(span);
                 counterDiv.appendChild(digitDiv);
 
-                animateDigit(span, currentCounter[index] || "0", num);
-            });
+                animateDigit(span, currentCounter[i] || "0", num);
+            }
         }
 
         function animateDigit(element, oldValue, newValue) {
