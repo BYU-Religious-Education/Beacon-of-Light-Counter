@@ -25,34 +25,27 @@
 
         .counter {
             display: inline-block;
-            animation: roll 1s ease-in-out infinite;
-        }
-
-        @keyframes roll {
-            0% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-100%);
-            }
-            100% {
-                transform: translateY(0);
-            }
+            transition: transform 1s ease-in-out; /* Smooth transition on update */
         }
     </style>
     <script>
+        let currentCounter = 0; // Variable to track the current counter value
+
         async function fetchCounter() {
             try {
                 let response = await fetch("YOUR_GOOGLE_APPS_SCRIPT_URL?_=" + new Date().getTime()); 
                 let counter = await response.text();
                 
-                // Find the counter element
-                let counterElement = document.getElementById("counter");
-                if (counterElement.innerText !== counter) {
-                    counterElement.classList.remove('roll');
-                    void counterElement.offsetWidth; // Trigger reflow
-                    counterElement.innerText = counter;
-                    counterElement.classList.add('roll');
+                if (currentCounter !== parseInt(counter)) {
+                    currentCounter = parseInt(counter);
+                    let counterElement = document.getElementById("counter");
+                    
+                    // Trigger the smooth animation effect
+                    counterElement.style.transform = "translateY(-50px)"; // Move the number up
+                    setTimeout(() => {
+                        counterElement.style.transform = "translateY(0)"; // Move it back down
+                        counterElement.innerText = currentCounter; // Update the number
+                    }, 500); // This timing should match the duration of the transition
                 }
             } catch (error) {
                 document.body.innerText = "Error Loading";
