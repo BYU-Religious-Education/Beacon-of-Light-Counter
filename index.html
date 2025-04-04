@@ -12,30 +12,27 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        font-size: 30vw; /* Adjust to your desired size */
+        font-size: 35vw;
         font-family: Arial, sans-serif;
         text-align: center;
         margin: 0;
         background-color: black;
         color: white;
         }
-
+        
         .counter {
             display: flex;
-            padding: 0; /* Remove padding */
-            margin: 0;  /* Ensure no margin */
+            margin: 0; /* Remove any gap or margin between digits */
         }
         
         .digit {
             position: relative;
-            width: 1em; /* Adjust width to tightly fit digits */
+            width: 0.8em; /* Adjust width for no gaps */
             height: 1.2em;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0;  /* Ensure no margin */
-            padding: 0; /* Ensure no padding */
         }
 
         .digit span {
@@ -97,3 +94,4 @@
 </head>
 <body></body>
 </html>
+
