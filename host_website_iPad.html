@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Counter</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 20vw;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+        }
+    </style>
+    <script>
+        async function fetchCounter() {
+            try {
+                let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec");
+                let counter = await response.text();
+                document.body.innerText = counter;
+            } catch (error) {
+                document.body.innerText = "Error Loading";
+            }
+        }
+        setInterval(fetchCounter, 1000); // Refresh every second
+        window.onload = fetchCounter;
+    </script>
+</head>
+<body></body>
+</html>
