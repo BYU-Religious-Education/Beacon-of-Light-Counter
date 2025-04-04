@@ -27,7 +27,7 @@
         .digit {
             display: inline-block;
             position: relative;
-            width: 0.8em; /* Adjusted for better spacing */
+            width: 0.8em;
             height: 1em;
             overflow: hidden;
         }
@@ -39,25 +39,27 @@
         }
     </style>
     <script>
-        let currentCounter = "000"; // Default start value
+        let currentCounter = "000";
 
         async function fetchCounter() {
             try {
-                let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cachebust=");
-                let newCounter = await response.text().padStart(3, "0"); // Ensure it's always 3 digits
-                
+                let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cache=" + new Date().getTime());
+                if (!response.ok) throw new Error("Network response was not ok");
+                let newCounter = (await response.text()).trim().padStart(3, "0");
+
                 if (newCounter !== currentCounter) {
                     updateCounter(newCounter);
                     currentCounter = newCounter;
                 }
             } catch (error) {
                 document.body.innerText = "Error Loading";
+                console.error("Fetch error:", error);
             }
         }
 
         function updateCounter(newCounter) {
             let counterDiv = document.getElementById("counter");
-            counterDiv.innerHTML = ""; // Clear previous digits
+            counterDiv.innerHTML = ""; 
 
             newCounter.split("").forEach((num, index) => {
                 let digitDiv = document.createElement("div");
@@ -89,7 +91,7 @@
                     element.innerText = num;
                     element.style.transform = `translateY(${index * -100}%)`;
                 }, delay);
-                delay += 100; // Speed of animation
+                delay += 100;
             });
         }
 
