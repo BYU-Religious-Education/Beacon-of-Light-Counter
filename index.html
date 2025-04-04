@@ -12,7 +12,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-size: 33vw;
+            font-size: 10vw;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -25,16 +25,17 @@
         }
 
         .digit {
-            display: inline-block;
             position: relative;
-            width: 0.8em;
-            height: 1em;
+            width: 1em;
+            height: 1.2em; /* Ensure proper spacing */
             overflow: hidden;
+            display: inline-block;
         }
 
         .digit span {
             position: absolute;
             width: 100%;
+            text-align: center;
             transition: transform 0.5s ease-in-out;
         }
     </style>
@@ -64,8 +65,11 @@
             newCounter.split("").forEach((num, index) => {
                 let digitDiv = document.createElement("div");
                 digitDiv.className = "digit";
+
                 let span = document.createElement("span");
                 span.innerText = num;
+                span.style.transform = "translateY(0)"; // Ensures correct position
+
                 digitDiv.appendChild(span);
                 counterDiv.appendChild(digitDiv);
 
@@ -74,9 +78,9 @@
         }
 
         function animateDigit(element, oldValue, newValue) {
-            let steps = [];
             let start = parseInt(oldValue);
             let end = parseInt(newValue);
+            let steps = [];
 
             if (start <= end) {
                 for (let i = start; i <= end; i++) steps.push(i);
