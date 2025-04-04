@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beacon of Light Counter</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,18 +14,46 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-size: 33vw;
+            font-size: 27vw; /* Adjust the font size */
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
+            background-color: black;
+            color: white;
+            overflow: hidden;
+        }
+
+        .counter {
+            display: inline-block;
+            animation: roll 1s ease-in-out infinite;
+        }
+
+        @keyframes roll {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(0);
+            }
         }
     </style>
     <script>
         async function fetchCounter() {
             try {
-                let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec");
+                let response = await fetch("YOUR_GOOGLE_APPS_SCRIPT_URL?_=" + new Date().getTime()); 
                 let counter = await response.text();
-                document.body.innerText = counter;
+                
+                // Find the counter element
+                let counterElement = document.getElementById("counter");
+                if (counterElement.innerText !== counter) {
+                    counterElement.classList.remove('roll');
+                    void counterElement.offsetWidth; // Trigger reflow
+                    counterElement.innerText = counter;
+                    counterElement.classList.add('roll');
+                }
             } catch (error) {
                 document.body.innerText = "Error Loading";
             }
@@ -32,5 +62,7 @@
         window.onload = fetchCounter;
     </script>
 </head>
-<body></body>
+<body>
+    <div id="counter" class="counter">0</div>
+</body>
 </html>
