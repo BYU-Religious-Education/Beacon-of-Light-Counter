@@ -12,7 +12,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-size: 10vw;
+            font-size: 35vw;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -22,7 +22,7 @@
 
         .counter {
             display: flex;
-            gap: 0.1em;
+            gap: 0.1em; /* Small spacing between digits */
         }
 
         .digit {
@@ -39,7 +39,8 @@
             position: absolute;
             width: 100%;
             text-align: center;
-            transition: transform 0.5s ease-in-out;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
         }
     </style>
     <script>
@@ -63,56 +64,25 @@
 
         function updateCounter(newCounter) {
             let counterDiv = document.getElementById("counter");
-            let maxLength = Math.max(currentCounter.length, newCounter.length);
-            
-            // Pad the currentCounter with leading zeros if necessary
-            currentCounter = currentCounter.padStart(maxLength, "0");
-            newCounter = newCounter.padStart(maxLength, "0");
+            counterDiv.innerHTML = ""; // Clear previous digits
 
-            // Iterate through each digit and update accordingly
-            for (let i = 0; i < maxLength; i++) {
-                let newDigit = newCounter[i];
-                let oldDigit = currentCounter[i];
+            for (let i = 0; i < newCounter.length; i++) {
+                let num = newCounter[i] || "0"; // Ensure each digit is filled
 
-                let digitDiv = document.getElementById(`digit-${i}`);
-                if (!digitDiv) {
-                    digitDiv = document.createElement("div");
-                    digitDiv.className = "digit";
-                    digitDiv.id = `digit-${i}`;
-                    let span = document.createElement("span");
-                    digitDiv.appendChild(span);
-                    counterDiv.appendChild(digitDiv);
-                }
+                let digitDiv = document.createElement("div");
+                digitDiv.className = "digit";
 
-                let span = digitDiv.querySelector("span");
-                if (newDigit !== oldDigit) {
-                    animateDigit(span, oldDigit, newDigit);
-                } else {
-                    span.innerText = newDigit; // Static number (no animation)
-                }
-            }
-        }
+                let span = document.createElement("span");
+                span.innerText = num;
+                span.style.opacity = "0"; // Initially hide the number
 
-        function animateDigit(element, oldValue, newValue) {
-            let steps = [];
-            let start = parseInt(oldValue);
-            let end = parseInt(newValue);
+                digitDiv.appendChild(span);
+                counterDiv.appendChild(digitDiv);
 
-            if (start <= end) {
-                for (let i = start; i <= end; i++) steps.push(i);
-            } else {
-                for (let i = start; i <= 9; i++) steps.push(i);
-                for (let i = 0; i <= end; i++) steps.push(i);
-            }
-
-            let delay = 0;
-            steps.forEach((num, index) => {
                 setTimeout(() => {
-                    element.innerText = num;
-                    element.style.transform = `translateY(${index * -100}%)`;
-                }, delay);
-                delay += 100; // Speed of animation
-            });
+                    span.style.opacity = "1"; // Fade in the number
+                }, 100); // Slight delay before fading in
+            }
         }
 
         window.onload = () => {
