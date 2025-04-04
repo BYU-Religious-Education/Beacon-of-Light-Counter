@@ -33,7 +33,7 @@
 
         async function fetchCounter() {
             try {
-                let response = await fetch("YOUR_GOOGLE_APPS_SCRIPT_URL?_=" + new Date().getTime()); 
+                let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec" + new Date().getTime()); 
                 let counter = await response.text();
                 
                 if (currentCounter !== parseInt(counter)) {
