@@ -7,32 +7,36 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <style>
-        body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        font-size: 35vw;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 0;
-        background-color: black;
-        color: white;
+       body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 10vw; /* Adjust size */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            background-color: black;
+            color: white;
+            line-height: 1;
         }
         
         .counter {
             display: flex;
-            margin: 0; /* Remove any gap or margin between digits */
+            margin: 0 10vw; /* Add margin to both sides (10% of viewport width) */
+            padding: 0;
         }
         
         .digit {
             position: relative;
-            width: 0.8em; /* Adjust width for no gaps */
+            width: 1em;
             height: 1.2em;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 0;
+            padding: 0;
         }
 
         .digit span {
