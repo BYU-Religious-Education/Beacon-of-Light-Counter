@@ -22,17 +22,21 @@
 
         .counter {
             display: flex;
+            gap: 0.2em; /* Space between digits */
         }
 
         .digit {
             position: relative;
             width: 1em;
-            height: 1.2em; /* Ensure proper spacing */
+            height: 1.2em;
             overflow: hidden;
-            display: inline-block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .digit span {
+            display: block;
             position: absolute;
             width: 100%;
             text-align: center;
@@ -68,7 +72,7 @@
 
                 let span = document.createElement("span");
                 span.innerText = num;
-                span.style.transform = "translateY(0)"; // Ensures correct position
+                span.style.transform = "translateY(0)";
 
                 digitDiv.appendChild(span);
                 counterDiv.appendChild(digitDiv);
