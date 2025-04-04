@@ -12,7 +12,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-size: 15vw;
+            font-size: 10vw;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -22,7 +22,7 @@
 
         .counter {
             display: flex;
-            gap: 0.1em; /* Small spacing between digits */
+            gap: 0.1em;
         }
 
         .digit {
@@ -39,20 +39,17 @@
             position: absolute;
             width: 100%;
             text-align: center;
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out;
+            transition: transform 0.5s ease-in-out;
         }
     </style>
     <script>
-        let currentCounter = "000";
+        let currentCounter = ""; // Start with an empty string to accommodate any number of digits.
 
         async function fetchCounter() {
             try {
                 let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cache=" + new Date().getTime());
                 if (!response.ok) throw new Error("Network response was not ok");
                 let newCounter = (await response.text()).trim();
-
-                newCounter = newCounter.padStart(3, "0"); // Ensure 3-digit format
 
                 if (newCounter !== currentCounter) {
                     updateCounter(newCounter);
@@ -68,29 +65,29 @@
             let counterDiv = document.getElementById("counter");
             counterDiv.innerHTML = ""; // Clear previous digits
 
-            for (let i = 0; i < 3; i++) {
-                let num = newCounter[i] || "0"; // Ensure 3 digits
+            for (let i = 0; i < newCounter.length; i++) {
+                let num = newCounter[i] || "0"; // Ensure each digit is filled
 
                 let digitDiv = document.createElement("div");
                 digitDiv.className = "digit";
 
                 let span = document.createElement("span");
                 span.innerText = num;
-                span.style.opacity = "0"; // Initially hide the number
+                span.style.transform = "translateY(100%)"; // Start from the bottom
 
                 digitDiv.appendChild(span);
                 counterDiv.appendChild(digitDiv);
 
                 setTimeout(() => {
-                    span.style.opacity = "1"; // Fade in the number
-                }, 100); // Slight delay before fading in
+                    span.style.transform = "translateY(0)"; // Scroll to the top (final position)
+                }, 100); // Slight delay before starting the animation
             }
         }
 
         window.onload = () => {
             document.body.innerHTML = `<div id="counter" class="counter"></div>`;
             fetchCounter();
-            setInterval(fetchCounter, 1000);
+            setInterval(fetchCounter, 1000); // Fetch the counter every second
         };
     </script>
 </head>
