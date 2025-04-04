@@ -12,7 +12,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-size: 10vw;
+            font-size: 15vw;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -22,7 +22,7 @@
 
         .counter {
             display: flex;
-            gap: 0.2em;
+            gap: 0.1em; /* Small spacing between digits */
         }
 
         .digit {
@@ -51,8 +51,7 @@
                 if (!response.ok) throw new Error("Network response was not ok");
                 let newCounter = (await response.text()).trim();
 
-                // Ensure the counter is exactly 3 digits
-                newCounter = newCounter.padStart(3, "0");
+                newCounter = newCounter.padStart(3, "0"); // Ensure 3-digit format
 
                 if (newCounter !== currentCounter) {
                     updateCounter(newCounter);
@@ -69,7 +68,7 @@
             counterDiv.innerHTML = ""; 
 
             for (let i = 0; i < 3; i++) {
-                let num = newCounter[i] || "0"; // Ensure we always have 3 digits
+                let num = newCounter[i] || "0"; // Ensure 3 digits
 
                 let digitDiv = document.createElement("div");
                 digitDiv.className = "digit";
