@@ -63,25 +63,56 @@
 
         function updateCounter(newCounter) {
             let counterDiv = document.getElementById("counter");
-            counterDiv.innerHTML = ""; // Clear previous digits
+            let maxLength = Math.max(currentCounter.length, newCounter.length);
+            
+            // Pad the currentCounter with leading zeros if necessary
+            currentCounter = currentCounter.padStart(maxLength, "0");
+            newCounter = newCounter.padStart(maxLength, "0");
 
-            for (let i = 0; i < newCounter.length; i++) {
-                let num = newCounter[i] || "0"; // Ensure each digit is filled
+            // Iterate through each digit and update accordingly
+            for (let i = 0; i < maxLength; i++) {
+                let newDigit = newCounter[i];
+                let oldDigit = currentCounter[i];
 
-                let digitDiv = document.createElement("div");
-                digitDiv.className = "digit";
+                let digitDiv = document.getElementById(`digit-${i}`);
+                if (!digitDiv) {
+                    digitDiv = document.createElement("div");
+                    digitDiv.className = "digit";
+                    digitDiv.id = `digit-${i}`;
+                    let span = document.createElement("span");
+                    digitDiv.appendChild(span);
+                    counterDiv.appendChild(digitDiv);
+                }
 
-                let span = document.createElement("span");
-                span.innerText = num;
-                span.style.transform = "translateY(100%)"; // Start from the bottom
-
-                digitDiv.appendChild(span);
-                counterDiv.appendChild(digitDiv);
-
-                setTimeout(() => {
-                    span.style.transform = "translateY(0)"; // Scroll to the top (final position)
-                }, 100); // Slight delay before starting the animation
+                let span = digitDiv.querySelector("span");
+                if (newDigit !== oldDigit) {
+                    animateDigit(span, oldDigit, newDigit);
+                } else {
+                    span.innerText = newDigit; // Static number (no animation)
+                }
             }
+        }
+
+        function animateDigit(element, oldValue, newValue) {
+            let steps = [];
+            let start = parseInt(oldValue);
+            let end = parseInt(newValue);
+
+            if (start <= end) {
+                for (let i = start; i <= end; i++) steps.push(i);
+            } else {
+                for (let i = start; i <= 9; i++) steps.push(i);
+                for (let i = 0; i <= end; i++) steps.push(i);
+            }
+
+            let delay = 0;
+            steps.forEach((num, index) => {
+                setTimeout(() => {
+                    element.innerText = num;
+                    element.style.transform = `translateY(${index * -100}%)`;
+                }, delay);
+                delay += 100; // Speed of animation
+            });
         }
 
         window.onload = () => {
