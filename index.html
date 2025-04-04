@@ -14,7 +14,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-size: 27vw; /* Adjust the font size */
+            font-size: 20vw; /* Adjusted for larger numbers */
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
@@ -24,38 +24,87 @@
         }
 
         .counter {
+            display: flex;
+            gap: 0.2em;
+        }
+
+        .digit {
             display: inline-block;
-            transition: transform 1s ease-in-out; /* Smooth transition on update */
+            position: relative;
+            overflow: hidden;
+            width: 1em;
+            height: 1.2em;
+        }
+
+        .digit span {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.5s ease-in-out;
         }
     </style>
     <script>
-        let currentCounter = 0; // Variable to track the current counter value
+        let currentCounter = "000"; // Start with a fixed number of digits
 
         async function fetchCounter() {
             try {
                 let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cachebust=" + new Date().getTime()); 
-                let counter = await response.text();
+                let newCounter = response.text();
                 
-                if (currentCounter !== parseInt(counter)) {
-                    currentCounter = parseInt(counter);
-                    let counterElement = document.getElementById("counter");
-                    
-                    // Trigger the smooth animation effect
-                    counterElement.style.transform = "translateY(-50px)"; // Move the number up
-                    setTimeout(() => {
-                        counterElement.style.transform = "translateY(0)"; // Move it back down
-                        counterElement.innerText = currentCounter; // Update the number
-                    }, 500); // This timing should match the duration of the transition
-                }
+                newCounter.then(value => {
+                    value = value.padStart(currentCounter.length, '0'); // Keep same number of digits
+                    if (value !== currentCounter) {
+                        updateCounter(value);
+                        currentCounter = value;
+                    }
+                });
             } catch (error) {
                 document.body.innerText = "Error Loading";
             }
         }
+
+        function updateCounter(newCounter) {
+            let counterElement = document.getElementById("counter");
+            counterElement.innerHTML = ""; // Clear existing numbers
+
+            for (let i = 0; i < newCounter.length; i++) {
+                let digitWrapper = document.createElement("div");
+                digitWrapper.classList.add("digit");
+
+                let digitSpan = document.createElement("span");
+                digitSpan.innerText = currentCounter[i] || "0"; // Default to 0
+                digitWrapper.appendChild(digitSpan);
+                counterElement.appendChild(digitWrapper);
+
+                // Animate digit rolling up to the new number
+                animateDigit(digitSpan, parseInt(currentCounter[i] || "0"), parseInt(newCounter[i]));
+            }
+        }
+
+        function animateDigit(element, oldValue, newValue) {
+            let steps = [];
+            if (oldValue <= newValue) {
+                for (let i = oldValue; i <= newValue; i++) steps.push(i);
+            } else {
+                for (let i = oldValue; i <= 9; i++) steps.push(i);
+                for (let i = 0; i <= newValue; i++) steps.push(i);
+            }
+
+            let delay = 0;
+            steps.forEach((num, index) => {
+                setTimeout(() => {
+                    element.style.transform = `translateY(-${index * 100}%)`;
+                    element.innerText = num;
+                }, delay);
+                delay += 100; // Adjust speed of rolling animation
+            });
+        }
+
         setInterval(fetchCounter, 1000); // Refresh every second
         window.onload = fetchCounter;
     </script>
 </head>
 <body>
-    <div id="counter" class="counter">0</div>
+    <div id="counter" class="counter">000</div>
 </body>
 </html>
