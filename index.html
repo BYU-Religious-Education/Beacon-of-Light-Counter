@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beacon of Light Counter</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,100 +12,93 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-size: 20vw; /* Adjusted for larger numbers */
+            font-size: 33vw;
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
             background-color: black;
             color: white;
-            overflow: hidden;
         }
 
         .counter {
             display: flex;
-            gap: 0.2em;
         }
 
         .digit {
-        display: inline-block;
-        position: relative;
-        overflow: hidden;
-        width: 1em;
-        height: 1em; /* Ensure the container is tall enough */
-        line-height: 1em; /* Align numbers properly */
+            display: inline-block;
+            position: relative;
+            width: 0.8em; /* Adjusted for better spacing */
+            height: 1em;
+            overflow: hidden;
         }
 
         .digit span {
             position: absolute;
             width: 100%;
-            text-align: center;
             transition: transform 0.5s ease-in-out;
-            font-size: inherit; /* Ensures font scales correctly */
-        }    
-
+        }
     </style>
     <script>
-        let currentCounter = "000"; // Start with a fixed number of digits
+        let currentCounter = "000"; // Default start value
 
         async function fetchCounter() {
             try {
-                let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cachebust=" + new Date().getTime()); 
-                let newCounter = response.text();
+                let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cachebust=");
+                let newCounter = await response.text().padStart(3, "0"); // Ensure it's always 3 digits
                 
-                newCounter.then(value => {
-                    value = value.padStart(currentCounter.length, '0'); // Keep same number of digits
-                    if (value !== currentCounter) {
-                        updateCounter(value);
-                        currentCounter = value;
-                    }
-                });
+                if (newCounter !== currentCounter) {
+                    updateCounter(newCounter);
+                    currentCounter = newCounter;
+                }
             } catch (error) {
                 document.body.innerText = "Error Loading";
             }
         }
 
         function updateCounter(newCounter) {
-            let counterElement = document.getElementById("counter");
-            counterElement.innerHTML = ""; // Clear existing numbers
+            let counterDiv = document.getElementById("counter");
+            counterDiv.innerHTML = ""; // Clear previous digits
 
-            for (let i = 0; i < newCounter.length; i++) {
-                let digitWrapper = document.createElement("div");
-                digitWrapper.classList.add("digit");
+            newCounter.split("").forEach((num, index) => {
+                let digitDiv = document.createElement("div");
+                digitDiv.className = "digit";
+                let span = document.createElement("span");
+                span.innerText = num;
+                digitDiv.appendChild(span);
+                counterDiv.appendChild(digitDiv);
 
-                let digitSpan = document.createElement("span");
-                digitSpan.innerText = currentCounter[i] || "0"; // Default to 0
-                digitWrapper.appendChild(digitSpan);
-                counterElement.appendChild(digitWrapper);
-
-                // Animate digit rolling up to the new number
-                animateDigit(digitSpan, parseInt(currentCounter[i] || "0"), parseInt(newCounter[i]));
-            }
+                animateDigit(span, currentCounter[index] || "0", num);
+            });
         }
 
         function animateDigit(element, oldValue, newValue) {
             let steps = [];
-            if (oldValue <= newValue) {
-                for (let i = oldValue; i <= newValue; i++) steps.push(i);
+            let start = parseInt(oldValue);
+            let end = parseInt(newValue);
+
+            if (start <= end) {
+                for (let i = start; i <= end; i++) steps.push(i);
             } else {
-                for (let i = oldValue; i <= 9; i++) steps.push(i);
-                for (let i = 0; i <= newValue; i++) steps.push(i);
+                for (let i = start; i <= 9; i++) steps.push(i);
+                for (let i = 0; i <= end; i++) steps.push(i);
             }
 
             let delay = 0;
             steps.forEach((num, index) => {
                 setTimeout(() => {
-                    element.style.transform = `translateY(-${index * 100}%)`;
                     element.innerText = num;
+                    element.style.transform = `translateY(${index * -100}%)`;
                 }, delay);
-                delay += 100; // Adjust speed of rolling animation
+                delay += 100; // Speed of animation
             });
         }
 
-        setInterval(fetchCounter, 1000); // Refresh every second
-        window.onload = fetchCounter;
+        window.onload = () => {
+            document.body.innerHTML = `<div id="counter" class="counter"></div>`;
+            fetchCounter();
+            setInterval(fetchCounter, 1000);
+        };
     </script>
 </head>
-<body>
-    <div id="counter" class="counter">000</div>
-</body>
+<body></body>
 </html>
