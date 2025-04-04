@@ -29,11 +29,12 @@
         }
 
         .digit {
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-            width: 1em;
-            height: 1.2em;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        width: 1em;
+        height: 1em; /* Ensure the container is tall enough */
+        line-height: 1em; /* Align numbers properly */
         }
 
         .digit span {
@@ -41,7 +42,9 @@
             width: 100%;
             text-align: center;
             transition: transform 0.5s ease-in-out;
-        }
+            font-size: inherit; /* Ensures font scales correctly */
+        }    
+
     </style>
     <script>
         let currentCounter = "000"; // Start with a fixed number of digits
