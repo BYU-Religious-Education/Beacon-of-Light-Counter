@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <style>
-       body {
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,14 +19,15 @@
             background-color: black;
             color: white;
             line-height: 1;
+            position: relative; /* needed for offline text */
         }
-        
+
         .counter {
             display: flex;
-            margin: 0 10vw; /* Add margin to both sides (10% of viewport width) */
+            margin: 0 10vw;
             padding: 0;
         }
-        
+
         .digit {
             position: relative;
             width: 1em;
@@ -35,8 +36,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0;
-            padding: 0;
         }
 
         .digit span {
@@ -48,21 +47,41 @@
         }
     </style>
     <script>
-        let currentCounter = ""; // Start with an empty string to accommodate any number of digits.
+        let currentCounter = "";
+        let retryInterval = 1000; // start with 1 second
+        let offlineText; // placeholder for "Offline" text
 
         async function fetchCounter() {
             try {
-                let response = await fetch("https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cache=" + new Date().getTime());
+                let response = await fetch(
+                    "https://script.google.com/macros/s/AKfycbynaSFVzU3XxUC3twZhvH5Y-QHnUwebr5pJuW9XzpoGI77FV3pMRY7Ox0aTii_D3WWN/exec?cache=" + Date.now()
+                );
                 if (!response.ok) throw new Error("Network response was not ok");
+
                 let newCounter = (await response.text()).trim();
 
                 if (newCounter !== currentCounter) {
                     updateCounter(newCounter);
                     currentCounter = newCounter;
                 }
+
+                removeOfflineText(); // remove offline text if it exists
+
+                // Reset retry interval on success
+                retryInterval = 1000; 
+                setTimeout(fetchCounter, retryInterval);
+
             } catch (error) {
-                document.body.innerText = "Error Loading";
                 console.error("Fetch error:", error);
+
+                // Show last known value
+                if (currentCounter) updateCounter(currentCounter);
+
+                showOfflineText(); // display "Offline" text
+
+                // Exponential backoff (max 30s)
+                retryInterval = Math.min(retryInterval * 2, 30000);
+                setTimeout(fetchCounter, retryInterval);
             }
         }
 
@@ -71,31 +90,49 @@
             counterDiv.innerHTML = ""; // Clear previous digits
 
             for (let i = 0; i < newCounter.length; i++) {
-                let num = newCounter[i] || "0"; // Ensure each digit is filled
+                let num = newCounter[i] || "0";
 
                 let digitDiv = document.createElement("div");
                 digitDiv.className = "digit";
 
                 let span = document.createElement("span");
                 span.innerText = num;
-                span.style.opacity = "0"; // Initially hide the number
+                span.style.opacity = "0";
 
                 digitDiv.appendChild(span);
                 counterDiv.appendChild(digitDiv);
 
                 setTimeout(() => {
-                    span.style.opacity = "1"; // Fade in the number
-                }, 100); // Slight delay before fading in
+                    span.style.opacity = "1";
+                }, 100);
+            }
+        }
+
+        function showOfflineText() {
+            if (!offlineText) {
+                offlineText = document.createElement("div");
+                offlineText.style.position = "absolute";
+                offlineText.style.top = "10px";
+                offlineText.style.right = "20px";
+                offlineText.style.fontSize = "48px";
+                offlineText.style.color = "red";
+                offlineText.textContent = "Offline";
+                document.body.appendChild(offlineText);
+            }
+        }
+
+        function removeOfflineText() {
+            if (offlineText) {
+                offlineText.remove();
+                offlineText = null;
             }
         }
 
         window.onload = () => {
             document.body.innerHTML = `<div id="counter" class="counter"></div>`;
             fetchCounter();
-            setInterval(fetchCounter, 1000); // Fetch the counter every second
         };
     </script>
 </head>
 <body></body>
 </html>
-
